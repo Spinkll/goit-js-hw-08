@@ -73,24 +73,12 @@ const gallery = ({ preview, original, description }) => {
   const link = document.createElement("a");
   link.classList.add("gallery-link");
   link.href = original;
-  link.setAttribute("target", "_blank");
 
   const img = document.createElement("img");
   img.classList.add("gallery-image");
   img.src = preview;
   img.setAttribute("data-source", original);
   img.alt = description;
-
-  img.addEventListener("click", (event) => {
-    event.preventDefault();
-    const largeImageUrl = img.dataset.source;
-
-    const instance = basicLightbox.create(
-      `<img src="${largeImageUrl}" width="800" height="600">`
-    );
-
-    instance.show();
-  });
 
   link.appendChild(img);
   galleryItem.appendChild(link);
@@ -100,3 +88,16 @@ const gallery = ({ preview, original, description }) => {
 
 const galleryItems = images.map(gallery);
 galleryContainer.append(...galleryItems);
+
+const lightbox = basicLightbox.create('<img src="" width="800" height="600">');
+
+galleryContainer.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+  const largeImageUrl = event.target.dataset.source;
+
+  lightbox.element().querySelector("img").src = largeImageUrl;
+  lightbox.show();
+});
